@@ -30,5 +30,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = False
 
+    admin_initial_email: str | None = None
+    admin_initial_password: str | None = None
 
 settings = Settings()
