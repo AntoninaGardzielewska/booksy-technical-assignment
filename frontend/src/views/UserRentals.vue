@@ -27,50 +27,25 @@
         :key="rental.id"
         class="rental-item card"
       >
-        <div class="rental-header">
-          <h3>{{ rental.hardware.name }}</h3>
-          <span :class="['badge', rental.returned_at ? 'badge-available' : 'badge-in-use']">
-            {{ rental.returned_at ? 'Returned' : 'Active' }}
-          </span>
-        </div>
-
-        <div class="rental-details">
-          <div class="detail-row">
-            <span class="detail-label">Brand:</span>
-            <span class="detail-value">{{ rental.hardware.brand }}</span>
+        <div class="rental-info">
+          <div class="rental-main">
+            <h3 class="rental-name">{{ rental.hardware.name }}</h3>
+            <p class="rental-meta">{{ rental.hardware.brand }} • {{ formatDate(rental.rented_at) }}</p>
+            <p v-if="rental.hardware.notes" class="rental-notes">{{ rental.hardware.notes }}</p>
           </div>
 
-          <div class="detail-row">
-            <span class="detail-label">Rented On:</span>
-            <span class="detail-value">{{ formatDate(rental.rented_at) }}</span>
-          </div>
-
-          <div v-if="rental.returned_at" class="detail-row">
-            <span class="detail-label">Returned On:</span>
-            <span class="detail-value">{{ formatDate(rental.returned_at) }}</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-label">Duration:</span>
-            <span class="detail-value">{{ calculateDuration(rental) }}</span>
-          </div>
-
-          <div v-if="rental.hardware.notes" class="detail-row">
-            <span class="detail-label">Notes:</span>
-            <span class="detail-value">{{ rental.hardware.notes }}</span>
-          </div>
         </div>
 
         <div class="rental-actions">
           <button
             v-if="!rental.returned_at"
             @click="returnHardware(rental.hardware.id)"
-            class="btn btn-success btn-small"
+            class="btn btn-primary btn-small"
             :disabled="returning[rental.hardware.id]"
           >
-            {{ returning[rental.hardware.id] ? 'Returning...' : 'Return Hardware' }}
+            {{ returning[rental.hardware.id] ? 'Returning...' : 'Return' }}
           </button>
-          <span v-else class="btn btn-secondary btn-small" disabled>Already Returned</span>
+          <button v-else class="btn btn-small" disabled style="opacity: 0.5;">Returned</button>
         </div>
       </div>
     </div>
@@ -162,6 +137,8 @@ onMounted(() => {
 
 h1 {
   margin-bottom: 1.5rem;
+  color: #1b1d21;
+  font-size: 1.75rem;
 }
 
 .rental-filters {
@@ -176,6 +153,7 @@ h1 {
   gap: 0.5rem;
   cursor: pointer;
   font-weight: 500;
+  color: #333;
 }
 
 .rental-filters input {
@@ -185,60 +163,57 @@ h1 {
 }
 
 .rentals-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .rental-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.rental-header {
-  display: flex;
-  justify-content: space-between;
+  padding: 1.25rem !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
   align-items: start;
-  margin-bottom: 1rem;
 }
 
-.rental-header h3 {
-  margin: 0;
-  flex: 1;
-  color: #00B4D8;
-}
-
-.rental-details {
-  flex: 1;
-  margin-bottom: 1rem;
-}
-
-.detail-row {
+.rental-info {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.detail-label {
-  font-weight: 600;
-  color: #333;
-  min-width: 120px;
-}
-
-.detail-value {
-  color: #666;
-  text-align: right;
+.rental-main {
   flex: 1;
+}
+
+.rental-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1b1d21;
+}
+
+.rental-meta {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.rental-status {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rental-notes {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .rental-actions {
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-.rental-actions button {
-  width: 100%;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .loading,
@@ -246,8 +221,9 @@ h1 {
   text-align: center;
   padding: 2rem;
   background: white;
-  border-radius: 8px;
-  color: #666;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  color: #999;
 }
 
 .loading {
@@ -258,20 +234,27 @@ h1 {
 }
 
 .alert {
+  border-radius: 10px;
   margin-bottom: 1.5rem;
 }
 
 @media (max-width: 768px) {
-  .rentals-list {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .rental-item {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .detail-row {
+  .rental-info {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .detail-value {
-    text-align: left;
+  .rental-actions {
+    justify-content: flex-end;
   }
 }
 </style>

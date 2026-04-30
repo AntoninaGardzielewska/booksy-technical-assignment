@@ -79,7 +79,7 @@ const handleLogin = async () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #00B4D8 0%, #0096C7 100%);
+  background: linear-gradient(135deg, #218cac 0%, #1a6a8a 100%);
   padding: 1rem;
 }
 
@@ -96,7 +96,7 @@ const handleLogin = async () => {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #00B4D8;
+  color: #218cac;
 }
 
 .login-subtitle {

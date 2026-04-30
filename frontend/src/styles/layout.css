@@ -270,7 +270,7 @@
     width: 100%;
   }
 
-  .hardware-grid {
-    grid-template-columns: 1fr;
+  .hardware-list {
+    gap: 0.5rem;
   }
 }

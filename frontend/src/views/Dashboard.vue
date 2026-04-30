@@ -46,13 +46,8 @@
           <div class="hardware-main">
             <h3 class="hardware-name">{{ hw.name }}</h3>
             <p class="hardware-meta">{{ hw.brand }} • {{ hw.purchase_date }}</p>
+            <div v-if="hw.notes" class="hardware-notes">{{ hw.notes }}</div>
           </div>
-          <div class="hardware-status">
-            <span :class="['badge', `badge-${hw.status.toLowerCase().replace(' ', '-')}`]">
-              {{ hw.status }}
-            </span>
-          </div>
-          <div v-if="hw.notes" class="hardware-notes">{{ hw.notes }}</div>
         </div>
 
         <div class="card-actions">
