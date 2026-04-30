@@ -51,7 +51,7 @@ def semantic_search_with_gemini(query: str, hardware_items: List[Hardware]) -> L
         ])
         
         # Call Gemini to find relevant hardware
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-3-flash-preview")
         prompt = f"""Given this list of hardware items:
 {hardware_descriptions}
 

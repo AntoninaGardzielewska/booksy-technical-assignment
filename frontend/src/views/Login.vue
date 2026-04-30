@@ -13,7 +13,7 @@
             id="email"
             v-model="email"
             type="email"
-            placeholder="admin@booksy.com"
+            placeholder="user@booksy.com"
             required
             @focus="error = ''"
           />
@@ -36,11 +36,6 @@
           <span v-else>Sign In</span>
         </button>
       </form>
-
-      <div class="demo-credentials">
-        <p><strong>Demo Credentials:</strong></p>
-        <p>Admin: admin@booksy.com / admin123</p>
-      </div>
     </div>
   </div>
 </template>

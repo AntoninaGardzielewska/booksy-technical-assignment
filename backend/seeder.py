@@ -6,6 +6,7 @@ from typing import List, Tuple
 from sqlalchemy.orm import Session
 from backend.models import Hardware, User, HardwareStatus, UserRole
 from backend.security import hash_password
+from backend.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -163,12 +164,13 @@ def seed_database(db: Session, initial_data_path: str = "data/initial_data.json"
                 logger.info(f"Added hardware: {item['name']} (ID: {item['id']})")
         
         # Add initial admin user
-        admin_email = "admin@booksy.com"
+        admin_email = settings.admin_initial_email
+
         existing_admin = db.query(User).filter(User.email == admin_email).first()
         if not existing_admin:
             admin = User(
                 email=admin_email,
-                password_hash=hash_password("admin123"),
+                password_hash=hash_password(settings.admin_initial_password),
                 role=UserRole.ADMIN,
             )
             db.add(admin)
