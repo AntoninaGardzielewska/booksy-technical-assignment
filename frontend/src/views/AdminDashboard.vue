@@ -76,7 +76,6 @@
               <tr>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Status</th>
                 <th>Created</th>
               </tr>
             </thead>
@@ -84,7 +83,6 @@
               <tr v-for="user in users" :key="user.id">
                 <td>{{ user.email }}</td>
                 <td><span :class="['badge', user.role === 'admin' ? 'badge-admin' : '']">{{ user.role }}</span></td>
-                <td><span :class="user.is_active ? 'text-success' : 'text-danger'">{{ user.is_active ? 'Active' : 'Inactive' }}</span></td>
                 <td>{{ formatDate(user.created_at) }}</td>
               </tr>
             </tbody>

@@ -43,7 +43,6 @@ User login - returns JWT token and user info.
     "id": 1,
     "email": "admin@booksy.com",
     "role": "admin",
-    "is_active": true,
     "created_at": "2026-04-26T10:00:00"
   }
 }
@@ -78,7 +77,6 @@ Create a new user account.
   "id": 2,
   "email": "newuser@booksy.com",
   "role": "user",
-  "is_active": true,
   "created_at": "2026-04-26T11:00:00"
 }
 ```
@@ -102,14 +100,12 @@ List all users in the system.
     "id": 1,
     "email": "admin@booksy.com",
     "role": "admin",
-    "is_active": true,
     "created_at": "2026-04-26T10:00:00"
   },
   {
     "id": 2,
     "email": "user@booksy.com",
     "role": "user",
-    "is_active": true,
     "created_at": "2026-04-26T11:00:00"
   }
 ]

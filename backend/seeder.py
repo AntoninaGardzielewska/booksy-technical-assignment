@@ -170,7 +170,6 @@ def seed_database(db: Session, initial_data_path: str = "data/initial_data.json"
                 email=admin_email,
                 password_hash=hash_password("admin123"),
                 role=UserRole.ADMIN,
-                is_active=True
             )
             db.add(admin)
             logger.info(f"Added admin user: {admin_email}")

@@ -105,8 +105,7 @@ class TestRentalBusinessLogic:
         second_user = User(
             email="user2@test.com",
             password_hash="hashed",
-            role="user",
-            is_active=True
+            role="user"
         )
         db.add(second_user)
         db.commit()

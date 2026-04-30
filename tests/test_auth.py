@@ -39,19 +39,7 @@ class TestAuthentication:
         
         assert response.status_code == 401
         assert "Invalid email or password" in response.json()["detail"]
-    
-    def test_login_inactive_user(self, client, db, regular_user):
-        """Test login with inactive user."""
-        regular_user.is_active = False
-        db.commit()
-        
-        response = client.post(
-            "/auth/login",
-            json={"email": regular_user.email, "password": "password123"}
-        )
-        
-        assert response.status_code == 403
-        assert "inactive" in response.json()["detail"].lower()
+
 
 
 class TestPasswordHashing:

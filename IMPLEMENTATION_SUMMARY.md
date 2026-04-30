@@ -78,7 +78,6 @@ A full-stack web application for managing hardware rentals with admin controls, 
 - email (unique, indexed)
 - password_hash (bcrypt hashed)
 - role (enum: admin, user)
-- is_active (boolean)
 - created_at (timestamp)
 
 **Rentals Table:**

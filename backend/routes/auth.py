@@ -34,12 +34,6 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive"
-        )
-    
     # Create JWT token
     token = create_jwt_token(user.id, user.email, user.role.value)
     

@@ -50,8 +50,7 @@ def admin_user(db):
     admin = User(
         email="admin@test.com",
         password_hash=hash_password("password123"),
-        role=UserRole.ADMIN,
-        is_active=True
+        role=UserRole.ADMIN
     )
     db.add(admin)
     db.commit()
@@ -64,8 +63,7 @@ def regular_user(db):
     user = User(
         email="user@test.com",
         password_hash=hash_password("password123"),
-        role=UserRole.USER,
-        is_active=True
+        role=UserRole.USER
     )
     db.add(user)
     db.commit()

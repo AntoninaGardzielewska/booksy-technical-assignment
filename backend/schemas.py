@@ -13,18 +13,11 @@ class UserCreate(BaseModel):
     role: UserRole = UserRole.USER
 
 
-class UserUpdate(BaseModel):
-    """User update model."""
-    role: Optional[UserRole] = None
-    is_active: Optional[bool] = None
-
-
 class UserResponse(BaseModel):
     """User response model."""
     id: int
     email: str
     role: UserRole
-    is_active: bool
     created_at: datetime
     
     class Config:
