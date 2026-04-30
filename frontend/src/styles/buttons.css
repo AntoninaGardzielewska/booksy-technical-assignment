@@ -1,0 +1,91 @@
+.btn {
+  /* Small, minimal buttons */
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Primary: Teal */
+.btn-primary {
+  background-color: #218cac;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: #1a6a8a;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary: Light background */
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #218cac;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background-color: #e8f5f9;
+}
+
+/* Success: Green */
+.btn-success {
+  background-color: #22c55e;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover {
+  background-color: #16a34a;
+  box-shadow: var(--shadow-md);
+}
+
+/* Danger: Red */
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+  box-shadow: var(--shadow-md);
+}
+
+/* Small variant */
+.btn-small {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Outline variant */
+.btn-outline {
+  background: white;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+  background: var(--bg-color);
+}

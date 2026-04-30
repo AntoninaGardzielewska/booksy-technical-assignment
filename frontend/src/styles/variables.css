@@ -1,0 +1,36 @@
+:root {
+  /* Teal Palette */
+  --primary-color: #218cac;
+  --primary-dark: #1a6a8a;
+  --primary-light: #e8f5f9;
+
+  /* Neutral Backgrounds */
+  --bg-color: #f5f7fa;
+  --soft-bg: #ffffff;
+  --card-bg: #ffffff;
+
+  /* Typography */
+  --text-primary: #0f1419;
+  --text-secondary: #4a5568;
+  --text-light: #a0aec0;
+
+  /* Status Colors */
+  --success-color: #22c55e;
+  --success-bg: #f0fdf4;
+  --warning-color: #f59e0b;
+  --warning-bg: #fffbeb;
+  --danger-color: #ef4444;
+  --danger-bg: #fef2f2;
+
+  /* Borders & Depth */
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
