@@ -37,6 +37,8 @@ def validate_and_fix_date(date_str: str) -> Tuple[bool, str]:
     for fmt in formats:
         try:
             parsed_date = datetime.strptime(str(date_str).strip(), fmt)
+            if parsed_date > datetime.now():
+                logger.warning(f"Future purchase date detected: '{date_str}' — item will be imported but may not be physically available yet")
             return True, parsed_date.strftime("%d-%m-%Y")
         except (ValueError, TypeError):
             continue
@@ -173,7 +175,6 @@ def seed_database(db: Session, initial_data_path: str = "data/initial_data.json"
                 role=UserRole.ADMIN
             )
             db.add(admin)
-            logger.info(f"Added admin user: {admin_email}")
         
         db.commit()
         logger.info(f"Database seeded successfully with {len(cleaned_data)} hardware items")
