@@ -37,10 +37,6 @@
         </button>
       </form>
 
-      <div class="demo-credentials">
-        <p><strong>Demo Credentials:</strong></p>
-        <p>Admin: admin@booksy.com / admin123</p>
-      </div>
     </div>
   </div>
 </template>
