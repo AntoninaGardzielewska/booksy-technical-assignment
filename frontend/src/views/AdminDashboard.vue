@@ -21,7 +21,11 @@
       <div class="tab-content">
         <h2>Manage Users</h2>
 
-        <div class="form-section">
+        <button @click="showUserForm = !showUserForm" class="btn btn-primary" style="margin-bottom: 1.5rem;">
+          {{ showUserForm ? 'Cancel' : '+ Add User' }}
+        </button>
+
+        <div v-if="showUserForm" class="form-section">
           <h3>Create New User</h3>
           <form @submit.prevent="createUser">
             <div class="form-grid">
@@ -244,6 +248,7 @@ const tabs = ['Users', 'Hardware']
 const error = ref('')
 const success = ref('')
 const showAddForm = ref(false)
+const showUserForm = ref(false)
 
 // Users
 const users = ref([])

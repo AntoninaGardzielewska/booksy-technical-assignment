@@ -16,20 +16,29 @@
         <button @click="handleSemanticSearch" class="btn btn-primary btn-small">Search</button>
       </div>
 
-      <div class="filters">
-        <select v-model="statusFilter" @change="loadHardware" class="filter-select">
-          <option value="">All Statuses</option>
-          <option value="Available">Available</option>
-          <option value="In Use">In Use</option>
-          <option value="Repair">Repair</option>
-        </select>
+      <div class="filters-group">
+        <div class="filters-row">
+          <select v-model="statusFilter" @change="loadHardware" class="filter-select filter-compact">
+            <option value="">All Statuses</option>
+            <option value="Available">Available</option>
+            <option value="In Use">In Use</option>
+            <option value="Repair">Repair</option>
+          </select>
 
-        <select v-model="sortBy" @change="loadHardware" class="filter-select">
-          <option value="name">Sort by Name</option>
-          <option value="brand">Sort by Brand</option>
-          <option value="purchase_date">Sort by Date</option>
-          <option value="status">Sort by Status</option>
-        </select>
+          <select v-model="brandFilter" @change="loadHardware" class="filter-select filter-compact">
+            <option value="">All Brands</option>
+            <option v-for="brand in uniqueBrands" :key="brand" :value="brand">
+              {{ brand }}
+            </option>
+          </select>
+
+          <select v-model="sortBy" @change="loadHardware" class="filter-select filter-compact">
+            <option value="name">Sort by Name</option>
+            <option value="brand">Sort by Brand</option>
+            <option value="purchase_date">Sort by Date</option>
+            <option value="status">Sort by Status</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -46,8 +55,9 @@
           <div class="hardware-main">
             <h3 class="hardware-name">{{ hw.name }}</h3>
             <p class="hardware-meta">{{ hw.brand }} • {{ hw.purchase_date }}</p>
-            <div v-if="hw.notes" class="hardware-notes">{{ hw.notes }}</div>
           </div>
+          
+          <div v-if="hw.notes" class="hardware-notes">{{ hw.notes }}</div>
         </div>
 
         <div class="card-actions">
@@ -99,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { dashboardAPI, searchAPI } from '../api'
 
 const hardware = ref([])
@@ -109,11 +119,24 @@ const success = ref('')
 const renting = ref({})
 
 const statusFilter = ref('')
+const brandFilter = ref('')
 const sortBy = ref('name')
 const searchQuery = ref('')
 const skip = ref(0)
 const limit = ref(20)
 const totalItems = ref(0)
+const allBrands = ref([])
+const uniqueBrands = computed(() => allBrands.value)
+
+const loadAllBrands = async () => {
+  try {
+    const response = await dashboardAPI.listHardware({ skip: 0, limit: 100 })
+    const brands = new Set(response.data.items.map(hw => hw.brand))
+    allBrands.value = Array.from(brands).sort()
+  } catch (err) {
+    console.error('Failed to load brands', err)
+  }
+}
 
 const loadHardware = async () => {
   loading.value = true
@@ -128,6 +151,10 @@ const loadHardware = async () => {
 
     if (statusFilter.value) {
       params.status_filter = statusFilter.value
+    }
+
+    if (brandFilter.value) {
+      params.brand_filter = brandFilter.value
     }
 
     const response = await dashboardAPI.listHardware(params)
@@ -158,7 +185,10 @@ const rentHardware = async (hardwareId) => {
 }
 
 const handleSemanticSearch = async () => {
+  // If search is cleared, return to normal hardware listing
   if (!searchQuery.value.trim()) {
+    skip.value = 0
+    await loadHardware()
     return
   }
 
@@ -167,9 +197,34 @@ const handleSemanticSearch = async () => {
 
   try {
     const response = await searchAPI.semanticSearch(searchQuery.value)
-    hardware.value = response.data.results
-    totalItems.value = response.data.results.length
-    success.value = `Found ${response.data.results.length} matching items`
+    let results = response.data.results
+
+    // Apply filters to search results
+    if (statusFilter.value) {
+      results = results.filter(hw => hw.status === statusFilter.value)
+    }
+    if (brandFilter.value) {
+      results = results.filter(hw => hw.brand === brandFilter.value)
+    }
+
+    // Apply sorting
+    if (sortBy.value) {
+      results.sort((a, b) => {
+        if (sortBy.value === 'name') {
+          return a.name.localeCompare(b.name)
+        } else if (sortBy.value === 'brand') {
+          return a.brand.localeCompare(b.brand)
+        } else if (sortBy.value === 'purchase_date') {
+          return new Date(a.purchase_date) - new Date(b.purchase_date)
+        } else if (sortBy.value === 'status') {
+          return a.status.localeCompare(b.status)
+        }
+      })
+    }
+
+    hardware.value = results
+    totalItems.value = results.length
+    success.value = `Found ${results.length} matching items`
   } catch (err) {
     error.value = 'Search failed'
     console.error(err)
@@ -180,6 +235,7 @@ const handleSemanticSearch = async () => {
 
 onMounted(() => {
   loadHardware()
+  loadAllBrands()
 })
 </script>
 
@@ -240,10 +296,47 @@ onMounted(() => {
   box-shadow: 0 0 0 3px rgba(33, 140, 172, 0.1);
 }
 
-.filters {
+.filters-group {
   display: flex;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.filters-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: #f0f0f0;
+  color: #1b1d21;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.filter-select:hover {
+  border-color: #218cac;
+  background: white;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #218cac;
+  box-shadow: 0 0 0 3px rgba(33, 140, 172, 0.1);
+}
+
+.filter-compact {
+  flex: 1 1 0;
 }
 
 .hardware-list {
@@ -346,14 +439,6 @@ onMounted(() => {
     flex-direction: column;
   }
 
-  .filters {
-    flex-direction: column;
-  }
-
-  .filter-select {
-    width: 100%;
-  }
-
   .hardware-card {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -366,6 +451,21 @@ onMounted(() => {
 
   .card-actions {
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters-group {
+    flex-direction: column;
+  }
+
+  .filters-row {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+    flex: 1 1 100%;
   }
 }
 </style>
