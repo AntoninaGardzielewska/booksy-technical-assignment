@@ -28,7 +28,6 @@ def validate_and_fix_date(date_str: str) -> Tuple[bool, str]:
         "%d-%m-%Y",      # DD-MM-YYYY (target format)
         "%Y-%m-%d",      # YYYY-MM-DD
         "%d/%m/%Y",      # DD/MM/YYYY
-        "%m/%d/%Y",      # MM/DD/YYYY
         "%d.%m.%Y",      # DD.MM.YYYY
         "%Y/%m/%d",      # YYYY/MM/DD
         "%d-%m-%y",      # DD-MM-YY
