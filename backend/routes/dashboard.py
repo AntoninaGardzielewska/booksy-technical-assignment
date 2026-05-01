@@ -25,6 +25,7 @@ async def list_hardware(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     status_filter: Optional[str] = Query(None),
+    brand_filter: Optional[str] = Query(None),
     sort_by: str = Query("name", regex="^(name|brand|purchase_date|status)$")
 ):
     """List hardware with filtering and sorting.
@@ -35,6 +36,7 @@ async def list_hardware(
         skip: Number of items to skip
         limit: Maximum items to return
         status_filter: Filter by status (Available, In Use, Repair)
+        brand_filter: Filter by brand
         sort_by: Sort by field (name, brand, purchase_date, status)
         
     Returns:
@@ -52,7 +54,9 @@ async def list_hardware(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid status: {status_filter}"
             )
-    
+    if brand_filter:
+        query = query.filter(Hardware.brand.ilike(f"%{brand_filter}%"))
+
     # Get total count
     total = query.count()
     

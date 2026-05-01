@@ -114,12 +114,14 @@ class RentalReturnRequest(BaseModel):
 class SemanticSearchRequest(BaseModel):
     """Semantic search request model."""
     query: str = Field(..., min_length=1)
+    status_filter: Optional[str] = Field(None, description="Filter by status: Available, In Use, or Repair")
 
 
 class SemanticSearchResponse(BaseModel):
     """Semantic search response model."""
     results: List[HardwareResponse]
     query: str
+    filters_applied: Optional[dict] = Field(None, description="Information about applied filters")
 
 
 # ============ Error Schemas ============
