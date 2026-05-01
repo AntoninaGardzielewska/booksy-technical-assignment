@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Hardware Rental Management System",
     description="A system for managing hardware rentals with admin controls and AI-powered search",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 # Add CORS middleware
