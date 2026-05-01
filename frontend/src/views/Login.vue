@@ -13,7 +13,7 @@
             id="email"
             v-model="email"
             type="email"
-            placeholder="admin@booksy.com"
+            placeholder="user@booksy.com"
             required
             @focus="error = ''"
           />

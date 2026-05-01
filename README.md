@@ -195,9 +195,7 @@ pytest tests/ -v
 
 ## Demo Credentials
 
-Default admin account created on first run:
-- **Email**: admin@booksy.com
-- **Password**: admin123
+Admin account is created based on the environment variables admin_initial_email and admin_initial_password
 
 Create additional users through the admin dashboard.
 

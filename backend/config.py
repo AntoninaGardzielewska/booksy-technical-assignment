@@ -25,12 +25,14 @@ class Settings(BaseSettings):
     
     # Environment
     environment: str = "development"
-    
+
+    admin_initial_email: str = ""
+    admin_initial_password: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = False
 
-    admin_initial_email: str | None = None
-    admin_initial_password: str | None = None
+    
 
 settings = Settings()
