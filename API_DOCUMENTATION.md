@@ -30,7 +30,7 @@ User login - returns JWT token and user info.
 ```json
 {
   "email": "admin@booksy.com",
-  "password": "admin123"
+  "password": "Admin123"
 }
 ```
 

@@ -38,9 +38,7 @@ Open your browser and go to: **http://localhost:5173**
 
 ## Step 2: Login
 
-Use the default admin credentials:
-- **Email**: admin@booksy.com
-- **Password**: admin123
+Use the default admin credentials specified in environment variables
 
 ## Step 3: Explore Features
 
@@ -59,27 +57,8 @@ Use the default admin credentials:
 2. **Rent Hardware** - Click "Rent Now" on available items
 3. **My Rentals** - View rental history and return items
 
-## Step 4: Test API (Optional)
 
-### Interactive API Docs
-Go to: **http://localhost:8000/docs**
-
-### Sample Requests
-
-**Login:**
-```bash
-curl -X POST "http://localhost:8000/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@booksy.com","password":"admin123"}'
-```
-
-**List Hardware:**
-```bash
-curl -X GET "http://localhost:8000/dashboard/hardware" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
-
-## Running Tests
+## Step 4: Running Tests
 
 ```bash
 cd /home/antonina/AI-booksy
@@ -91,36 +70,6 @@ Expected output:
 - ✅ 8+ rental business logic tests  
 - ✅ 7+ admin functionality tests
 - ✅ 6+ data seeding tests
-
-## Troubleshooting
-
-### Backend won't start
-```bash
-# Make sure port 8000 is free
-lsof -i :8000
-
-# Or use a different port
-python -m uvicorn backend.main:app --port 9000 --reload
-```
-
-### Frontend won't start
-```bash
-cd frontend
-npm install  # Reinstall node_modules
-npm run dev  # Try again
-```
-
-### Database issues
-```bash
-# Delete and recreate database
-rm backend/app.db
-python -m uvicorn backend.main:app --reload
-```
-
-### Can't login
-1. Check that backend is running (`http://localhost:8000/docs`)
-2. Verify email is `admin@booksy.com`
-3. Verify password is `admin123`
 
 ## Next Steps
 
@@ -162,37 +111,3 @@ CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
 # Environment
 ENVIRONMENT=development
 ```
-
-## Key Features Implemented
-
-✅ **Three Pillars Complete:**
-1. ✅ Management Engine - Admin and user controls
-2. ✅ Rental Engine - Business logic with guards
-3. ✅ AI-Native Layer - Gemini semantic search
-
-✅ **Database:**
-- Automatic data cleaning (duplicate IDs, invalid dates)
-- Status normalization
-- Invalid row detection and logging
-
-✅ **Security:**
-- JWT authentication
-- Password hashing (bcrypt)
-- Role-based access control
-- Protected API endpoints
-
-✅ **Testing:**
-- 31+ test cases
-- Business logic guards
-- Data integrity
-- Concurrent rental prevention
-
-✅ **UI/UX:**
-- Booksy-inspired design
-- Responsive layout
-- Real-time updates
-- Clear error messages
-
-## Support
-
-For issues or questions, check the main [README.md](./README.md) for detailed information.
