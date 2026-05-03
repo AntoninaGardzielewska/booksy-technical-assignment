@@ -4,13 +4,12 @@ A full-stack web application for managing hardware rentals with admin controls, 
 
 ## Live Demo
 
-**URL**: (https://booksy-technical-assignment.vercel.app/admin)
+**URL**: (https://booksy-technical-assignment-lcg1y3xhs.vercel.app/login)
 
 **Demo credentials**:
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@booksy.com | Admin123 |
-| User | user@booksy.com | User123 |
 
 > Additional users can only be created through the admin dashboard — there is no public registration.
 
@@ -69,11 +68,12 @@ AI-booksy/
 │   │   ├── stores/         # Pinia state management
 │   │   ├── router/         # Vue Router configuration
 │   │   ├── views/          # Vue components (pages)
+│   │   ├── styles/         # Styles components
 │   │   ├── App.vue         # Root component
 │   │   ├── main.js         # Vue app entry point
-│   │   └── style.css       # Global styles
 │   ├── index.html          # HTML entry point
 │   ├── package.json        # Node dependencies
+│   ├── vercel.json         # Vercel configuration
 │   └── vite.config.js      # Vite configuration
 ├── tests/                  # Backend tests
 │   ├── conftest.py         # Pytest configuration
@@ -86,6 +86,7 @@ AI-booksy/
 ├── .env                    # Environment variables (create from .env.example)
 ├── .gitignore              # Git ignore rules
 ├── requirements.txt        # Python dependencies
+├── railway.toml            # Railway configuration
 └── README.md               # This file
 ```
 
@@ -154,14 +155,6 @@ The seeder automatically:
 - Validates and converts dates to DD-MM-YYYY format and logs a warning for dates in the future
 - Normalizes status values to: `Available`, `In Use`, `Repair`
 - Drops rows with missing or unrecoverable required fields (e.g. missing name or brand), and logs a warning for each skipped record
-
-### Reset Database
-To reset the database (useful during development):
-```bash
-# From Python shell
-from backend.database import reset_db
-reset_db()
-```
 
 ---
 
@@ -239,12 +232,12 @@ The interface is inspired by Booksy's clean, modern design with:
 
 - **Admin Command Center**: Admins can add and delete hardware, toggle repair status, and create new user accounts. The add forms are hidden by default and expand on button click to keep the UI clean.
 - **Login System**: JWT-based authentication with bcrypt password hashing and inactive user blocking.
-- **Smart Dashboard**: Hardware list with sorting and filtering by name, brand, status, and purchase date. Filters and search are combined — filters narrow the result set first, then semantic search runs within those results.
+- **Smart Dashboard**: Hardware list with sorting and filtering by name, brand, status, and purchase date. Filters and search are combined — filters narrow the result set first, then search runs within those results.
 - **Rental Engine**: Full rent/return flow with business logic guards — users cannot rent unavailable or repair items, and concurrent rental attempts are handled with a first-come-first-served lock (the first request wins, the second gets a clear error).
 - **Rental History**: Complete per-user rental tracking.
 - **AI Semantic Search**: Natural language search powered by Google Gemini. The system first checks for direct matches, then uses Gemini for intent-based matching, and falls back to keyword search when no API key is present or when the query is cleared.
 - **Data Seeding & Cleaning**: The seeder validates and normalises the initial dataset on startup, handling duplicate IDs, malformed dates, invalid statuses, and missing required fields.
-- **Test Suite**: 15+ tests covering authentication, business logic, admin features, and data cleaning.
+- **Test Suite**: tests covering authentication, business logic, admin features, and data cleaning.
 
 ### ⚡ Shortcuts & Hacks
 
@@ -253,7 +246,7 @@ The interface is inspired by Booksy's clean, modern design with:
 The initial dataset contains records with missing required fields (e.g. a missing brand or a null purchase date). Rather than attempting to infer or repair every edge case, the seeder drops any record it cannot cleanly import and writes a warning to the logger.
 
 - **Why this was acceptable**: For an MVP with a fixed, known seed file, silent rejection with clear logging is a safe and honest strategy. A system admin reviewing the logs will know exactly which records were skipped and why.
-- **What I'd do in production**: Depending on the use case, I would do: (a) a data quarantine table where invalid records land for manual review, (b) a migration UI that flags problems and asks an admin to resolve them before import, or (c) automated repair rules with an audit trail (e.g. "brand set to 'Unknown' because field was empty"). The right choice depends on how frequently data is ingested and from which sources.
+- **What I'd do in production**: Depending on the use case, I would do: (a) a data quarantine table where invalid records land for manual review, (b) a migration UI that flags problems and asks an admin to resolve them before import, or (c) automated repair rules with an audit trail (e.g. "brand set to 'Unknown' because field was empty"). 
 
 **Admin credentials via environment variables (vs. a setup wizard)**
 
@@ -300,14 +293,14 @@ If I had one more day, my top four priorities would be:
 
 - **Claude in VS Code** (the AI chat panel built into VS Code via GitHub Copilot / Claude integration) — used throughout for code generation, refactoring suggestions, and writing tests.
 - **Google Gemini API** — integrated as the semantic search backend.
-- The AI log can be found in './AI_log.md'
+- The AI log can be found in `prompt.md`
 
 
 ### Data Strategy
 
 The initial seed dataset had several intentional problems: duplicate IDs, a future purchase date (2027), an unknown status value, a missing brand, a null purchase date, and a non-standard date format. The AI helped scaffold the seeder quickly, but I audited each cleaning rule manually to make sure edge cases were handled correctly rather than silently ignored.
 
-One known gap remains: the Logitech MX Master 3 has a purchase date of 2027-10-10. The seeder's date validator only checks that the string is parseable — it has no concept of "future date" — so this item is imported with no warning and no special handling. There is also no rental-time guard blocking a user from renting it. In a production system this would need either a seeder-level check (log a warning, set a `Pending` status) or a rent-endpoint guard (`purchase_date > today` → reject). For this MVP it was left as a documented, known edge case.
+One known gap remains: the Logitech MX Master 3 has a purchase date of 2027-10-10. The seeder's date validator only checks that the string is parseable and this item is imported with warning log. There is also no rental-time guard blocking a user from renting it. In a production system this would need either a seeder-level check (set a `Pending` status) or a rent-endpoint guard (`purchase_date > today` → reject). For this MVP it was left as a documented, known edge case.
 
 ### Prompt Trail
 

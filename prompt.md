@@ -48,14 +48,10 @@ I want you to create an initial plan for the task — the full specification. As
 For the database layer, include handling for broken seed data:
 - Duplicate IDs — the ID should be updated to the first available free value to ensure uniqueness.
 - Invalid dates — should be fixed if possible; the final format should be DD-MM-YYYY. if the date is in the future log a warning but keep the data
-- Wrong status values — try to normalise and map to one of three options: Available, Repair, In Use. If a record is impossible to repair, drop the row and log a warning.
+- Wrong status values — try to normalize and map to one of three options: Available, Repair, In Use. If a record is impossible to repair, drop the row and log a warning.
 
 Create REST API endpoints for this app. Include:
-- Login
-- Create user
-- Add / delete hardware
-- Toggle repair status
-- Return hardware
+- Login, Create user, Add / delete hardware, Toggle repair status, Return hardware
 - Dashboard listing with filtering, sorting, and the ability to rent hardware
 - Dashboard showing the current user's rented hardware
 
@@ -66,7 +62,7 @@ The UI should be simple and stylish — ideally inspired by the Booksy design la
 
 
 ### Message 1.3
-Specifically, I want to make sure the authentication flow is solid — JWT tokens with bcrypt password hashing. The admin account should be bootstrapped from environment variables (ADMIN_INITIAL_EMAIL, ADMIN_INITIAL_PASSWORD), not hardcoded in the source code. The seeder should be idempotent — it should only create the admin if no admin account already exists in the database.
+Make sure that there are no security problems. Also I want to make sure the authentication flow is solid — JWT tokens with bcrypt password hashing. 
 
 ### Message 1.4
 One more critical business logic requirement: ensure that no two users can rent the same device at the same time. The first request wins. 
@@ -81,14 +77,22 @@ The initial plan after Session 1 can be found in './.github/prompts/'
 ### Message 2.1
 Build the app as specified in the plan. Make sure all specified functionalities and concerns are included. Write clean, well-structured code.
 The expected structure is:
-- backend/ — FastAPI application with routes/, models.py, schemas.py, security.py, dependencies.py, seeder.py
-- frontend/ — Vue.js 3 with Vite, using Pinia for state and Vue Router for navigation
-- tests/ — pytest test suite covering auth, rental business logic, admin features, and data seeding
+- backend/
+- frontend/
+- tests/
 - data/initial_data.json — the seed file
 - .env for all secrets and configuration
 
 ### Message 2.2
 Fix the styling — it should match Booksy's aesthetic. The buttons should be smaller and dark-blue. The panels are overlapping each other. Everything should follow a minimal style.
+
+...
+
+The panels are still overlapping. I think it might be a positioning issue — can you check the layout component and tell me what's causing it before just throwing CSS at it?
+
+...
+
+Yeah that makes more sense. Fix that specifically — I don't want a bunch of other styles changed at the same time.
 
 ### Message 2.3 
 Ensure a few more things:
@@ -103,35 +107,53 @@ Ensure a few more things:
 ## Session 3 - Admin Panel Improvements
 
 ### Message 3.1
+How do you currently create the initial admin account?
+
+...
+
+Admin credentials should not be hardcoded in the source code. The initial credentials should be provided by the user in environment variables as INITIAL_ADMIN_EMAIL and INITIAL_ADMIN_PASSWORD.
+
+### Message 3.1
 In the admin dashboard, rework the hardware list:
 Add an "Add hardware" button. The form for adding new hardware should only appear when the admin clicks the button — it should be hidden by default.
 The purchase date field must not accept future dates. The placeholder should show today's date as an example.
 The "Any special notes..." placeholder text should match the same greyed-out colour as the other input placeholders — right now it's noticeably darker.
 Remove the colour-coded status badges (yellow/green/red). Instead, use a toggle button approach:
-- If the item is in repair → show a "Finish Repair" button.
-- If the item is available or in use → show a "Start Repair" button.
-- Add a subtle light indicator showing whether the item is currently available or in use — similar to the existing indicator in the hardware catalogue (blue when available, grey when in repair or in use).
+- If the item is in repair - show a "Finish Repair" button
+- If the item is available - show a "Start Repair" button
+- If the item is in use - show a dark-grey button, that cannot be clicked indicating that the device is in use and we cannot put it to repair right now
+- Add a subtle light indicator showing whether the item is currently available or in use - similar to the existing indicator in the hardware catalogue (blue when available, grey when in repair or in use).
 
 ### Message 3.2
 Add a similar "Add user" button to the admin users section — following the same pattern as the hardware add form: hidden by default, revealed on button click. The form layout should be consistent with the hardware form.
+
+
 
 ---
 
 ## Session 4 - upgrading search and filter options
 
 ### Message 4.1
-Add filtering options so users can filter by status and brand. Keep the existing sort controls but make the buttons smaller — they shouldn't span the full width of the panel.
+Add filtering options so users can filter by status and brand. Keep the existing sort controls but make the buttons smaller — they shouldn't take the full width of the panel.
 Filtering and semantic search should be combined: if both are active, first apply the filters to narrow the result set, then run the search within those filtered results.
 
+Before you implement anything: walk me through the design, I want to make sure that I understand the logic.
+
+...
+
+Actually, when multiple filters are selected, all of them must be applied simultaneously (AND logic, not OR). 
+Additionally the order of the operation must be: filter first, then search within the filtered results.
+How are you gonna handle semantic vs gemini search?
+
+...
+
+I want to first try the semantic search - if no results will be found then try the gemini search
+
+...
+
+Go on and implement this changes
+
 ### Message 4.2
-Ensure that filtering logic is working correctly:
-
-When multiple filters are selected, all of them must be applied simultaneously (AND logic, not OR).
-If no hardware matches all active filters, return an appropriate empty-state message — do not silently fall back to a wider result set.
-The order of operations must always be: filter first, then search within the filtered results.
-For search: if there are semantic matches from Gemini, use them. If there are no matches from Gemini (or the query is ambiguous), fall back to keyword search as a secondary strategy.
-
-### Message 4.3
 When the user clears the search input, that should also trigger a request — treat an empty query as "no search active" and return the currently filtered results without any semantic search on top.
 
 ---
@@ -309,14 +331,30 @@ While the AI wrote the bulk of the code, I had to manually intervene and "chat" 
 
 1. CORS problem: The app worked locally but died on Railway/Vercel
 Prompt:
-My CORS config is failing in production. I think pydantic-settings is reading the string from the env file literally. Help me write a validator or a .split(',') logic in config.py so it handles both local comma-separated strings and proper lists.
+My CORS config is failing in production. What's different about the environment that would cause this? I want to understand the root cause before just patching it.
+
+...
+
+Okay. Help me write a validator or a .split(',') logic in config.py so it handles both local comma-separated strings and proper lists.
 
 2. The seeder was flipping months and days.
 Prompt:
-The seeder is turning 05-12-2023 into May 12th, but it should be Dec 5th. Ensure that the seeder tries a few options, but tries them in the dd-mm-yyy or yyyy-mm-dd format to aviod date confusion
+The seeder is turning 05-12-2023 into May 12th, but it should be Dec 5th. The seeder is turning 05-12-2023 into May 12th, but it should be Dec 5th. Where in the parsing logic does this go wrong — is it the format string or the order we try formats?
+
+...
+
+Ensure that the seeder tries a few options, but tries them in the dd-mm-yyyy or yyyy-mm-dd format to avoid date confusion.
 
 3. the brand filter was only implemented in frontend logic, and it shown a list only from the currently filtered options
 Prompt:
-Right now the brand filter is only filtering the local Vue state. If I select 'Apple', it only shows brands of the filtered options, this should be fixed to always show all of the possible 'brand' options. Additionally I need to implement filtering in the backend - right now frontend only sends in the body brand_filter but backend does not use it. Update the GET /hardware endpoint to accept brand and status as optional query params and return the filtered list from the DB
+Something feels off with the brand filter — when I select Apple, the brand dropdown updates to only show Apple. That means the list of brands is being computed from the filtered results, not the full inventory. Is that what you built?
 
-4. Also there were several problems when the code was not running at all or there were small bugs - I usually tried to see if it's an easy fix and fix it manually (for example by adding new dependencies), If it looked more time-consuming, I'd ask the chat about the possible source of error.
+...
+
+That's wrong. The brand list should always show all possible brands regardless of what's filtered. And actually — is the filter even hitting the backend? Or is it all just Vue state manipulation?
+
+...
+
+Fix it to always show all possible brand options. Additionally, implement filtering in the backend — right now the frontend sends brand_filter in the body but the backend doesn't use it. Update the GET /hardware endpoint to accept brand and status as optional query params and return the filtered list from the DB.
+
+4. Also there were several problems when the code was not running at all or there were small bugs - I usually tried to see if it's an easy fix and fix it manually (for example by adding new dependencies), If it looked more time-consuming, I'd ask the chat about the possible source of error and then try to find the fix.
